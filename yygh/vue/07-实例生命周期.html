@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="vue.min.js"></script>
+
+    <div id="app">
+        {{msg}}
+        <br/>
+        <button @click="show()">点我</button>
+    </div>
+    <script>
+        new Vue({
+            el: '#app', //绑定vue作用的范围
+            data: {//定义页面中显示的模型数据
+                msg: 'hello'
+            },
+            methods: {
+                show() {
+                    console.log("show.....")
+                }
+            },
+            created() { //在页面渲染之前执行
+                debugger
+                console.log('created.....')
+            },
+            mounted() {//在页面渲染之后执行
+                debugger
+                console.log('mounted.....')
+            }
+
+        })
+    </script>
+
+</body>
+
+</html>

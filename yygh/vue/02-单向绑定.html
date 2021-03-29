@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="vue.min.js"></script>
+    <div id="app">
+        <div v-bind:style="msg01">hello</div>
+        <div v-bind:style="msg02">hello hhhhhh</div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app', //绑定vue作用的范围
+            data: {//定义页面中显示的模型数据
+                msg01:'color:red;',
+                msg02:'color:blue'
+            }
+        })
+    </script>
+
+</body>
+
+</html>

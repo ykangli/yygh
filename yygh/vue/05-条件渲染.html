@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="vue.min.js"></script>
+
+    <div id="app">
+        <input type="checkbox" v-model="ok" />
+        <br />
+        <div v-if="ok">选中了</div>
+        <div v-else>没有选中</div>
+
+    </div>
+    <script>
+        new Vue({
+            el: '#app', //绑定vue作用的范围
+            data: {//定义页面中显示的模型数据
+                title: '个人信息',
+                keyword: '请输入数据',
+                ok: false
+            },
+            methods: {
+                show() {
+                    console.log("show......")
+                },
+                test1() {
+                    console.log("test111......")
+                },
+                test2() {
+                    console.log("test222......")
+                },
+                test3() {
+                    console.log("test333......")
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
