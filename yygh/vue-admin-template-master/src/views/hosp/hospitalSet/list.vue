@@ -39,29 +39,17 @@
           {{ scope.row.status === 1 ? "可用" : "不可用" }}
         </template></el-table-column
       >
-      <!--删除按钮-->
-      <el-table-column label="操作" width="280" align="center">
-        <template slot-scope="scope">
-          <el-button
-            type="danger"
-            size="mini"
-            icon="el-icon-delete"
-            @click="removeDataById(scope.row.id)"
-          >
-          </el-button>
-        </template>
-      </el-table-column>
 
       <el-table-column label="操作" width="280" align="center">
         <template slot-scope="scope">
-          <el-button
+          <el-button style="width:30%;margin-bottom:10px;"
             type="danger"
             size="mini"
             icon="el-icon-delete"
             @click="removeDataById(scope.row.id)"
             >删除</el-button
           >
-          <el-button
+          <el-button style="width:40%;margin-bottom:10px;"
             v-if="scope.row.status == 1"
             type="primary"
             size="mini"
@@ -69,7 +57,7 @@
             @click="lockHostSet(scope.row.id, 0)"
             >锁定</el-button
           >
-          <el-button
+          <el-button style="width:40%;margin-bottom:10px;"
             v-if="scope.row.status == 0"
             type="danger"
             size="mini"
@@ -77,6 +65,13 @@
             @click="lockHostSet(scope.row.id, 1)"
             >取消锁定</el-button
           >
+          <router-link :to="'/hosp/hospitalSet/edit/' + scope.row.id">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+            ></el-button>
+          </router-link>
         </template>
       </el-table-column>
     </el-table>
@@ -165,7 +160,7 @@ export default {
     },
 
     //医院设置列表  getList()这个方法去调用/api/hosp/hospitalSet中的getPageList()方法
-    getList(page=1) {
+    getList(page = 1) {
       //添加当前页参数
       this.current = page;
       //hospitalSet就是import中的
