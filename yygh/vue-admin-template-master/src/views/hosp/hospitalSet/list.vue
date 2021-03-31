@@ -12,9 +12,22 @@
       >
     </el-form>
 
+    <!-- 工具条 -->
+    <div>
+      <el-button type="danger" size="mini" @click="removeRows()"
+        >批量删除</el-button
+      >
+    </div>
+
     <!-- banner列表 -->
-    <el-table :data="list" stripe style="width: 100%">
-      <el-table-column type="index" width="50" />
+    <el-table
+      :data="list"
+      stripe
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+      >>
+      <el-table-column type="selection" width="55" />
+      <el-table-column type="index" width="50" label="序号" />
       <el-table-column prop="hosname" label="医院名称" />
       <el-table-column prop="hoscode" label="医院编号" />
       <el-table-column prop="apiUrl" label="api基础路径" width="200" />
@@ -26,6 +39,7 @@
           {{ scope.row.status === 1 ? "可用" : "不可用" }}
         </template></el-table-column
       >
+      <!--删除按钮-->
       <el-table-column label="操作" width="280" align="center">
         <template slot-scope="scope">
           <el-button
@@ -37,7 +51,36 @@
           </el-button>
         </template>
       </el-table-column>
+
+      <el-table-column label="操作" width="280" align="center">
+        <template slot-scope="scope">
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            @click="removeDataById(scope.row.id)"
+            >删除</el-button
+          >
+          <el-button
+            v-if="scope.row.status == 1"
+            type="primary"
+            size="mini"
+            icon="el-icon-delete"
+            @click="lockHostSet(scope.row.id, 0)"
+            >锁定</el-button
+          >
+          <el-button
+            v-if="scope.row.status == 0"
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            @click="lockHostSet(scope.row.id, 1)"
+            >取消锁定</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
+
     <!-- 分页条 -->
     <el-pagination
       :current-page="page"
@@ -57,7 +100,7 @@
 
 <script>
 //引入接口定义的js文件   hospitalSet.js  js可以省略不写
-import hospitalSet from "@/api/hosp/hospitalSet";
+import hospitalSet from "@/api/hosp/hospitalSet.js";
 
 export default {
   // 定义数据模型
@@ -68,6 +111,7 @@ export default {
       searchObj: {}, //条件封装对象
       list: [], //每页数据集合
       total: 0, //总记录数
+      multipleSelection: [], // 批量选择中选择的记录列表
     };
   },
 
@@ -79,8 +123,49 @@ export default {
   },
 
   methods: {
+    //锁定和取消锁定
+    lockHostSet(id, status) {
+      hospitalSet.lockHospSet(id, status).then((response) => {
+        //刷新
+        this.getList(this.current);
+      });
+    },
+
+    // 当表格复选框选项发生变化的时候触发
+    handleSelectionChange(selection) {
+      this.multipleSelection = selection;
+    },
+
+    //批量删除
+    removeRows() {
+      this.$confirm("此操作将永久删除医院是设置信息, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        //确定执行then方法
+        var idList = [];
+        //遍历数组得到每个id值，设置到idList里面
+        for (var i = 0; i < this.multipleSelection.length; i++) {
+          var obj = this.multipleSelection[i];
+          var id = obj.id;
+          idList.push(id);
+        }
+        //调用接口
+        hospitalSet.batchRemoveHospSet(idList).then((response) => {
+          //提示
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          //刷新页面
+          this.getList(1);
+        });
+      });
+    },
+
     //医院设置列表  getList()这个方法去调用/api/hosp/hospitalSet中的getPageList()方法
-    getList(page = 1) {
+    getList(page=1) {
       //添加当前页参数
       this.current = page;
       //hospitalSet就是import中的
@@ -99,26 +184,27 @@ export default {
           console.log(error);
         });
     },
-  },
-  //删除医院设置的方法
-  removeDataById(id) {
-    this.$confirm("此操作将永久删除医院是设置信息, 是否继续?", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-    }).then(() => {
-      //确定执行then方法
-      //调用接口 教程中是hospSet，应该是hospitalSet
-      hospitalSet.deleteHospSet(id).then((response) => {
-        //提示
-        this.$message({
-          type: "success",
-          message: "删除成功!",
+
+    //删除医院设置的方法
+    removeDataById(id) {
+      this.$confirm("此操作将永久删除医院是设置信息, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        //确定执行then方法
+        //调用接口 教程中是hospSet，应该是hospitalSet
+        hospitalSet.deleteHospSet(id).then((response) => {
+          //提示
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          //刷新页面
+          this.getList(1);
         });
-        //刷新页面
-        this.getList(1);
       });
-    });
+    },
   },
 };
 </script>
