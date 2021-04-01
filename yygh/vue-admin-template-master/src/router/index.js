@@ -95,6 +95,27 @@ export const constantRouterMap = [
     ]
   },
 
+  //查询数据字典
+  {
+    //path是访问路径
+    path: '/cmn',
+    //布局
+    component: Layout,
+    redirect: '/cmn/list',
+    name: '数据管理',
+    alwaysShow: true,
+    meta: { title: '数据管理', icon: 'example' },
+    children: [
+      {
+        path: 'list',
+        name: '数据字典',
+        //设置跳转的展示页面路径
+        component: () => import('@/views/dict/list'),
+        meta: { title: '数据字典', icon: 'table' }
+      },
+    ]
+  },
+
   {
     path: '/form',
     component: Layout,
